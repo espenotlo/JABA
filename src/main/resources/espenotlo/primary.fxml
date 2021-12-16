@@ -25,6 +25,8 @@
                     <MenuItem mnemonicParsing="false" onAction="#exportBudget" text="Export.." />
                         <MenuItem mnemonicParsing="false" onAction="#importBudget" text="Import.." />
                         <MenuItem mnemonicParsing="false" text="Close" />
+                        <MenuItem mnemonicParsing="false" onAction="#storeTransactions" text="Save all" />
+                        <MenuItem mnemonicParsing="false" onAction="#loadTransactions" text="Load from DB" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">

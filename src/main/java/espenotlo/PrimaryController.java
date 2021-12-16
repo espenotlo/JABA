@@ -18,10 +18,19 @@ import javafx.stage.FileChooser;
 
 public class PrimaryController {
     private Budget budget = new Budget();
+    private final DBManager dbManager = new DBManager();
     private final ObservableList<Transaction> transactionListWrapper = FXCollections.observableArrayList(budget.getTransactions());
     private final ObservableList<String> categoriesListWrapper = FXCollections.observableArrayList(budget.getCategories());
     @FXML TableView<Transaction> table;
     @FXML TextField sumTextField;
+
+    @FXML
+    private void initialize() {
+        loadTransactions();
+        updateListWrapper();
+        showTransactions();
+    }
+
 
     @FXML
     private void showTransactions() {
@@ -63,7 +72,10 @@ public class PrimaryController {
         TransactionDialog transactionDialog = new TransactionDialog(categoriesListWrapper);
         Optional<Transaction> result = transactionDialog.showAndWait();
         if (result.isPresent()) {
-            budget.addTransaction(result.get());
+            Transaction t = result.get();
+            t.setTid(budget.generateTid());
+            budget.addTransaction(t);
+            dbManager.insertTransaction(t);
             updateListWrapper();
         }
     }
@@ -75,6 +87,7 @@ public class PrimaryController {
             TransactionDialog transactionDialog = new TransactionDialog(transaction, categoriesListWrapper);
             Optional<Transaction> result = transactionDialog.showAndWait();
             if (result.isPresent()) {
+                dbManager.editTransaction(result.get());
                 updateListWrapper();
             }
         }
@@ -84,14 +97,10 @@ public class PrimaryController {
     private void deleteTransaction() {
         Transaction transaction = table.getSelectionModel().getSelectedItem();
         if (null != transaction) {
+            dbManager.deleteTransaction(transaction.getTid());
             budget.removeTransaction(transaction);
             updateListWrapper();
         }
-    }
-
-    @FXML
-    private void switchToSecondary() throws IOException {
-        App.setRoot("secondary");
     }
 
     @FXML
@@ -134,5 +143,16 @@ public class PrimaryController {
                 System.out.println("uh oh");
             }
         }
+    }
+
+    @FXML
+    private void storeTransactions() {
+        this.budget.getTransactions().forEach(this.dbManager::insertTransaction);
+    }
+
+    @FXML
+    private void loadTransactions() {
+        this.dbManager.getAllTransactions().forEach(this.budget::addTransaction);
+        updateListWrapper();
     }
 }

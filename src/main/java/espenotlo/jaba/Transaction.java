@@ -1,17 +1,16 @@
 package espenotlo.jaba;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class Transaction {
+    private int tID;
     private int value;
     private String category;
     private LocalDate date;
     private String description;
 
     public Transaction(String category, String description, int value) {
+        this.tID = 0;
         this.value = value;
         this.category = category;
         this.date = LocalDate.now();
@@ -19,10 +18,27 @@ public class Transaction {
     }
 
     public Transaction(LocalDate date, String category, String description, int value) {
+        this.tID = 0;
         this.value = value;
         this.category = category;
         this.date = date;
         this.description = description;
+    }
+
+    public Transaction(int tID, LocalDate date, String category, String description, int value) {
+        this.tID = tID;
+        this.value = value;
+        this.category = category;
+        this.date = date;
+        this.description = description;
+    }
+
+    public int getTid() {
+        return tID;
+    }
+
+    public void setTid(int tID) {
+        this.tID = tID;
     }
 
     public int getValue() {
@@ -59,5 +75,13 @@ public class Transaction {
 
     public String[] getTransactionAsStringArray() {
         return new String[]{"" + this.date, this.category, this.description, "" + this.value};
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Transaction) {
+            return ((Transaction) o).getTid() == this.tID;
+        }
+        return false;
     }
 }

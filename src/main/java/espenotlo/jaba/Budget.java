@@ -25,7 +25,7 @@ public class Budget {
     }
 
     private void createDefaultCategories() {
-        String[] categoryNames = {"Forsikring", "Lån", "Lønn", "Mat", "Strøm", "Underholdning", "Annet"};
+        String[] categoryNames = {"debt", "salary", "entertainment", "other"};
         Collections.addAll(this.categories, categoryNames);
     }
 
@@ -60,23 +60,42 @@ public class Budget {
     }
 
     public void addTransaction(Transaction transaction) {
-        this.transactions.add(transaction);
+        if (transaction.getTid() == 0) {
+            transaction.setTid(generateTid());
+        }
+        boolean duplicate = false;
+        for (Transaction t : this.transactions) {
+            if (t.equals(transaction)) {
+                duplicate = true;
+                break;
+            }
+        }
+        if (!duplicate) {
+            this.transactions.add(transaction);
+        }
     }
 
-    public void addTransaction(int value, String category, LocalDate date, String description) {
-        this.transactions.add(new Transaction(date, category, description, value));
+    public void addTransaction(LocalDate date, String category, String description, int value) {
+        this.transactions.add(new Transaction(generateTid(), date, category, description, value));
+    }
+
+    public int generateTid() {
+        int i = 0;
+        for (Transaction t : transactions) {
+            if (t.getTid() > i) {
+                i = t.getTid();
+            }
+        }
+        return i+1;
     }
 
     public List<Transaction> getTransactions() {
         return this.transactions;
     }
 
-    public boolean removeTransaction(Transaction transaction) {
+    public void removeTransaction(Transaction transaction) {
         if (this.transactions.contains(transaction)) {
             this.transactions.remove(transaction);
-            return true;
-        } else {
-            return false;
         }
     }
 
