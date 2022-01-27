@@ -137,7 +137,7 @@ public class DBManager {
                 initialize();
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage() + " - Transaction is already in DB.");
         }
     }
 
